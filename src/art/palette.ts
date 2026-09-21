@@ -1,0 +1,18 @@
+export const PALETTE: Record<string, number | null> = {
+  '.': null,
+  'k': 0x000000,
+  'w': 0xffffff,
+  's': 0xf0b890,
+  'h': 0x4a2a2a,
+  'c': 0x38d5c8,
+  'b': 0x2556b8,
+  'r': 0xe84855,
+  'g': 0x4fb86a,
+  'l': 0x9be56d,
+  'y': 0xf6d743,
+  'o': 0xf28f3b,
+  'p': 0x7e5bef,
+  'd': 0x3b4451,
+  'e': 0x7a4a2d,
+  'a': 0x87a96b,
+};
