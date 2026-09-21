@@ -10,6 +10,12 @@ export class InteractionSystem {
   private readonly interactKey?: Phaser.Input.Keyboard.Key;
   private wasDialogueActive = false;
   private suppressInteractUntilReleased = false;
+  private readonly handleInteractKey = (): void => {
+    if (this.dialogue.active || this.wasDialogueActive || this.suppressInteractUntilReleased) {
+      return;
+    }
+    this.tryInteract();
+  };
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -20,9 +26,11 @@ export class InteractionSystem {
     private readonly onInteract: () => void,
   ) {
     this.interactKey = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+    scene.input.keyboard?.on('keydown-E', this.handleInteractKey);
     this.button.on('selected', this.tryInteract, this);
 
     scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      scene.input.keyboard?.off('keydown-E', this.handleInteractKey);
       this.button.off('selected', this.tryInteract, this);
     });
   }
