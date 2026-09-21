@@ -61,7 +61,7 @@ export class TitleScene extends Phaser.Scene {
         return;
       }
       this.started = true;
-      fadeToScene(this, ROUTE_TO_SCENE_KEY.test);
+      fadeToScene(this, ROUTE_TO_SCENE_KEY.barrel);
     };
 
     this.input.once(Phaser.Input.Events.POINTER_DOWN, start);
