@@ -49,6 +49,8 @@ export function fadeRestart(scene: Phaser.Scene): void {
 }
 
 export function setupSceneHotkeys(scene: Phaser.Scene): void {
+  scene.data.set('__transitioning', false);
+
   const keyboard = scene.input.keyboard;
   if (!keyboard) {
     return;
