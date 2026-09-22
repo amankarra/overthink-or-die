@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { buildTextures } from '../art/buildTextures';
 import { BarrelMan } from '../entities/BarrelMan';
 import { Player } from '../entities/Player';
+import { RobotBoss } from '../entities/RobotBoss';
 import { getRequestedSceneKey } from '../util/sceneRouting';
 
 export class BootScene extends Phaser.Scene {
@@ -13,6 +14,7 @@ export class BootScene extends Phaser.Scene {
     buildTextures(this);
     Player.createAnimations(this);
     BarrelMan.createAnimations(this);
+    RobotBoss.createAnimations(this);
     this.scene.start(getRequestedSceneKey());
   }
 }
