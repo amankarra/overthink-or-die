@@ -95,7 +95,9 @@ export class BarrelMan extends Phaser.GameObjects.Sprite {
 
     if (this.barrelState === 'rolling') {
       this.x += TUNING.barrelScene.barrelRollSpeedX * deltaSeconds;
-      this.y += TUNING.barrelScene.barrelRollSpeedY * deltaSeconds;
+      this.y =
+        TUNING.barrelScene.barrelStartY +
+        Math.max(0, this.x - TUNING.barrelScene.slideX) * TUNING.barrelScene.barrelRollSlope;
       this.rotation += TUNING.barrelScene.barrelRollRotationSpeed * deltaSeconds;
       return;
     }

@@ -47,7 +47,6 @@ export class BarrelScene extends Phaser.Scene {
   private plantFailing = false;
   private noPlantMode = false;
   private noPlantKey?: Phaser.Input.Keyboard.Key;
-  private rollStartedAt?: number;
 
   constructor() {
     super('BarrelScene');
@@ -123,7 +122,6 @@ export class BarrelScene extends Phaser.Scene {
     this.transitionStarted = false;
     this.plantFailing = false;
     this.noPlantMode = false;
-    this.rollStartedAt = undefined;
   }
 
   update(_time: number, delta: number): void {
@@ -400,17 +398,12 @@ export class BarrelScene extends Phaser.Scene {
     if (this.barrelMan.isRunning && this.barrelMan.x >= TUNING.barrelScene.slideX) {
       this.barrelMan.startRolling();
       this.exposure = 0;
-      this.rollStartedAt = this.time.now;
       this.shadowGraphics?.clear();
     }
 
-    const hasRolledLongEnough =
-      this.rollStartedAt !== undefined &&
-      this.time.now - this.rollStartedAt >= TUNING.barrelScene.minRollBeforeExitMs;
-
     if (
       this.barrelMan.isRolling &&
-      hasRolledLongEnough &&
+      this.barrelMan.x >= TUNING.barrelScene.slideExitX &&
       this.player.x >= TUNING.barrelScene.slideX - TUNING.player.width
     ) {
       this.transitionStarted = true;

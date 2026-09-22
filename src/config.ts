@@ -48,10 +48,9 @@ export const TUNING = {
     shadowLengthMultiplier: 0.72,
     shadowHeight: 8,
     shadowYOffset: 2,
-    barrelRollSpeedX: 80,
-    barrelRollSpeedY: 54,
-    barrelRollRotationSpeed: 4.9,
-    minRollBeforeExitMs: 550,
+    barrelRollSpeedX: 68,
+    barrelRollSlope: 0.42,
+    barrelRollRotationSpeed: 4.2,
   },
   robot: {
     walkSpeed: 30,
