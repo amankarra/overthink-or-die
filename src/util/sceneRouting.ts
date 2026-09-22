@@ -31,13 +31,16 @@ const DEV_NUMBER_ROUTES: Record<string, RouteName> = {
   FIVE: 'ending',
 };
 
+const DEV_ONLY_ROUTES = new Set<RouteName>(['test', 'gallery']);
+
 export function getRequestedSceneKey(): string {
   const scene = new URLSearchParams(window.location.search).get('scene')?.toLowerCase();
-  if (scene === 'gallery' && !import.meta.env.DEV) {
-    return ROUTE_TO_SCENE_KEY.title;
-  }
   if (scene && scene in ROUTE_TO_SCENE_KEY) {
-    return ROUTE_TO_SCENE_KEY[scene as RouteName];
+    const route = scene as RouteName;
+    if (!import.meta.env.DEV && DEV_ONLY_ROUTES.has(route)) {
+      return ROUTE_TO_SCENE_KEY.title;
+    }
+    return ROUTE_TO_SCENE_KEY[route];
   }
   return ROUTE_TO_SCENE_KEY.title;
 }

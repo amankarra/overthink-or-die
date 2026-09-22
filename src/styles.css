@@ -7,11 +7,33 @@ body,
 }
 
 body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  background: #090a14;
+  background: #000000;
+  color: #ffffff;
+  font-family: monospace;
+}
+
+#game {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 canvas {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+noscript {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  background: #000000;
+  color: #f6d743;
 }

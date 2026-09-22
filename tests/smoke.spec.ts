@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-const scenes = ['test', 'title', 'intro', 'barrel', 'illusion', 'boss', 'ending', 'gallery'] as const;
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
+const prodScenes = ['title', 'intro', 'barrel', 'illusion', 'boss', 'ending'] as const;
+const devScenes = ['test', ...prodScenes, 'gallery'] as const;
+const scenes = process.env.SMOKE_PROD === '1' ? prodScenes : devScenes;
 
 for (const scene of scenes) {
   test(`loads ${scene}`, async ({ page }) => {
