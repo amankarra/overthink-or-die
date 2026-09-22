@@ -1,7 +1,15 @@
 import Phaser from 'phaser';
 import { TUNING } from '../config';
 
-export type RouteName = 'title' | 'test' | 'intro' | 'barrel' | 'illusion' | 'boss' | 'ending';
+export type RouteName =
+  | 'title'
+  | 'test'
+  | 'intro'
+  | 'barrel'
+  | 'illusion'
+  | 'boss'
+  | 'ending'
+  | 'gallery';
 
 export const ROUTE_TO_SCENE_KEY: Record<RouteName, string> = {
   title: 'TitleScene',
@@ -11,6 +19,7 @@ export const ROUTE_TO_SCENE_KEY: Record<RouteName, string> = {
   illusion: 'IllusionScene',
   boss: 'BossScene',
   ending: 'EndingScene',
+  gallery: 'GalleryScene',
 };
 
 const DEV_NUMBER_ROUTES: Record<string, RouteName> = {
@@ -23,6 +32,9 @@ const DEV_NUMBER_ROUTES: Record<string, RouteName> = {
 
 export function getRequestedSceneKey(): string {
   const scene = new URLSearchParams(window.location.search).get('scene')?.toLowerCase();
+  if (scene === 'gallery' && !import.meta.env.DEV) {
+    return ROUTE_TO_SCENE_KEY.title;
+  }
   if (scene && scene in ROUTE_TO_SCENE_KEY) {
     return ROUTE_TO_SCENE_KEY[scene as RouteName];
   }

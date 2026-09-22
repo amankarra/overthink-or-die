@@ -45,23 +45,23 @@ type WorshipperPose = 'pray0' | 'pray1' | 'walk0' | 'walk1';
 
 function makeWorshipperSprite(pose: WorshipperPose): string[] {
   const grid = makeGrid(14, 20);
-  drawFrame(grid, 4, 1, 6, 6, 'p');
-  drawRect(grid, 6, 4, 2, 2, 's');
-  drawFrame(grid, 3, 7, 8, 7, 'p');
-  drawRect(grid, 6, 10, 2, 2, 'y');
+  drawFrame(grid, 3, 1, 8, 8, 'd');
+  drawRect(grid, 5, 4, 4, 3, 'k');
+  drawFrame(grid, 2, 8, 10, 7, 'p');
+  drawRect(grid, 3, 10, 8, 1, 'd');
 
   if (pose === 'pray0' || pose === 'pray1') {
-    drawRect(grid, 1, 10, 4, 3, 'p');
-    drawRect(grid, 9, 10, 4, 3, 'p');
-    drawRect(grid, 2, 13, 3, 2, 'a');
-    drawRect(grid, 9, 13, 3, 2, 'a');
-    drawRect(grid, pose === 'pray0' ? 4 : 3, 15, 3, 2, 'a');
-    drawRect(grid, pose === 'pray0' ? 7 : 8, 15, 3, 2, 'a');
+    drawRect(grid, 1, pose === 'pray0' ? 10 : 11, 4, 3, 'p');
+    drawRect(grid, 9, pose === 'pray0' ? 11 : 10, 4, 3, 'p');
+    drawRect(grid, 2, 13, 3, 2, 'd');
+    drawRect(grid, 9, 13, 3, 2, 'd');
+    drawRect(grid, pose === 'pray0' ? 4 : 3, 15, 3, 3, 'd');
+    drawRect(grid, pose === 'pray0' ? 7 : 8, 15, 3, 3, 'd');
   } else {
-    drawRect(grid, 2, 8, 2, 6, 'p');
-    drawRect(grid, 10, 8, 2, 6, 'p');
-    drawRect(grid, pose === 'walk0' ? 4 : 3, 14, 3, 5, 'a');
-    drawRect(grid, pose === 'walk0' ? 8 : 9, 14, 3, 5, 'a');
+    drawRect(grid, 1, 9, 3, 6, 'p');
+    drawRect(grid, 10, 9, 3, 6, 'p');
+    drawRect(grid, pose === 'walk0' ? 4 : 3, 14, 3, 5, 'd');
+    drawRect(grid, pose === 'walk0' ? 8 : 9, 14, 3, 5, 'd');
     drawRect(grid, pose === 'walk0' ? 3 : 2, 18, 4, 1, 'k');
     drawRect(grid, pose === 'walk0' ? 8 : 9, 18, 4, 1, 'k');
   }
@@ -73,38 +73,45 @@ type RobotPose = 'idle' | 'walk0' | 'walk1' | 'kickWindup' | 'kick' | 'eyes';
 
 function makeRobotSprite(pose: RobotPose): string[] {
   const grid = makeGrid(64, 120);
-  const eye = pose === 'eyes' ? 'r' : 'y';
+  const eye = 'r';
   const leftLegOffset = pose === 'walk0' ? -3 : pose === 'walk1' ? 2 : 0;
   const rightLegOffset = pose === 'walk0' ? 2 : pose === 'walk1' ? -3 : 0;
 
-  drawFrame(grid, 23, 4, 18, 16, 'd');
-  drawRect(grid, 28, 10, 3, 3, eye);
-  drawRect(grid, 35, 10, 3, 3, eye);
-  drawFrame(grid, 18, 22, 28, 40, 'd');
-  drawRect(grid, 29, 34, 7, 11, pose === 'eyes' ? 'r' : 'p');
-  drawRect(grid, 20, 24, 24, 4, 'w');
+  drawFrame(grid, 21, 3, 22, 18, 'd');
+  drawRect(grid, 26, 9, 4, 3, eye);
+  drawRect(grid, 34, 9, 4, 3, eye);
+  drawRect(grid, 25, 15, 14, 2, 'k');
+  drawFrame(grid, 15, 22, 34, 42, 'd');
+  drawRect(grid, 19, 27, 26, 4, 'w');
+  drawRect(grid, 20, 34, 5, 17, 'a');
+  drawRect(grid, 40, 34, 5, 17, 'a');
+  drawRect(grid, 29, 35, 7, 13, pose === 'eyes' ? 'r' : 'p');
+  drawRect(grid, 29, 35, 7, 3, 'y');
+  drawRect(grid, 17, 57, 30, 4, 'k');
 
   if (pose === 'kickWindup') {
-    drawFrame(grid, 8, 25, 12, 25, 'd');
-    drawFrame(grid, 45, 27, 11, 25, 'd');
+    drawFrame(grid, 7, 25, 13, 27, 'd');
+    drawFrame(grid, 48, 28, 11, 25, 'd');
   } else if (pose === 'kick') {
-    drawFrame(grid, 4, 45, 24, 9, 'd');
-    drawFrame(grid, 45, 27, 11, 25, 'd');
+    drawFrame(grid, 3, 45, 26, 9, 'd');
+    drawFrame(grid, 48, 28, 11, 25, 'd');
   } else {
-    drawFrame(grid, 10, 27, 10, 32, 'd');
-    drawFrame(grid, 45, 27, 10, 32, 'd');
+    drawFrame(grid, 8, 27, 10, 32, 'd');
+    drawFrame(grid, 48, 27, 10, 32, 'd');
   }
 
-  drawFrame(grid, 20 + leftLegOffset, 62, 12, 43, 'd');
-  drawFrame(grid, 35 + rightLegOffset, 62, 12, 43, 'd');
-  drawFrame(grid, 13 + leftLegOffset, 103, 20, 10, 'd');
-  drawFrame(grid, 34 + rightLegOffset, 103, 20, 10, 'd');
-  drawRect(grid, 13 + leftLegOffset, 106, 8, 4, 'k');
-  drawRect(grid, 34 + rightLegOffset, 106, 8, 4, 'k');
+  drawFrame(grid, 18 + leftLegOffset, 63, 13, 42, 'd');
+  drawFrame(grid, 36 + rightLegOffset, 63, 13, 42, 'd');
+  drawFrame(grid, 10 + leftLegOffset, 103, 22, 11, 'd');
+  drawFrame(grid, 34 + rightLegOffset, 103, 22, 11, 'd');
+  drawRect(grid, 16 + leftLegOffset, 105, 8, 7, 'k');
+  drawRect(grid, 38 + rightLegOffset, 105, 10, 7, 'k');
+  drawRect(grid, 17 + leftLegOffset, 107, 5, 4, 'r');
+  drawRect(grid, 39 + rightLegOffset, 107, 5, 4, 'r');
 
   if (pose === 'kick') {
-    drawFrame(grid, 5, 94, 30, 11, 'd');
-    drawRect(grid, 5, 97, 8, 5, 'k');
+    drawFrame(grid, 4, 94, 30, 11, 'd');
+    drawRect(grid, 4, 97, 8, 5, 'k');
   }
 
   return gridRows(grid);
@@ -115,14 +122,21 @@ type SlabPose = 'upright' | 'fallen';
 function makeSlabSprite(pose: SlabPose): string[] {
   const grid = makeGrid(24, 40);
   if (pose === 'upright') {
-    drawFrame(grid, 6, 1, 12, 36, 'd');
-    drawRect(grid, 9, 5, 6, 18, 'p');
+    drawFrame(grid, 5, 1, 14, 36, 'g');
+    drawRect(grid, 8, 5, 2, 25, 'y');
+    drawRect(grid, 14, 7, 2, 20, 'y');
+    drawRect(grid, 8, 14, 8, 2, 'y');
+    drawRect(grid, 10, 25, 6, 2, 'l');
+    drawRect(grid, 7, 8, 3, 3, 'l');
+    drawRect(grid, 15, 18, 2, 2, 'r');
     drawRect(grid, 4, 37, 16, 3, 'k');
     return gridRows(grid);
   }
 
-  drawFrame(grid, 1, 22, 22, 12, 'd');
-  drawRect(grid, 5, 25, 12, 5, 'p');
+  drawFrame(grid, 1, 22, 22, 12, 'g');
+  drawRect(grid, 4, 25, 15, 2, 'y');
+  drawRect(grid, 8, 28, 9, 2, 'l');
+  drawRect(grid, 18, 25, 2, 2, 'r');
   drawRect(grid, 0, 34, 24, 3, 'k');
   return gridRows(grid);
 }
@@ -204,6 +218,78 @@ function makeHeroDanceSprite(pose: HeroDancePose): string[] {
   return gridRows(grid);
 }
 
+function makeHeroHurtSprite(): string[] {
+  const grid = makeGrid(18, 28);
+  drawFrame(grid, 5, 1, 8, 7, 's');
+  drawRect(grid, 7, 4, 1, 1, 'r');
+  drawRect(grid, 10, 4, 1, 1, 'r');
+  drawFrame(grid, 4, 8, 10, 8, 'c');
+  drawRect(grid, 8, 11, 2, 2, 'y');
+  drawRect(grid, 1, 8, 4, 3, 'c');
+  drawRect(grid, 13, 7, 4, 3, 'c');
+  drawRect(grid, 5, 16, 3, 8, 'b');
+  drawRect(grid, 10, 17, 3, 8, 'b');
+  drawRect(grid, 4, 24, 5, 2, 'r');
+  drawRect(grid, 10, 25, 5, 2, 'r');
+  return gridRows(grid);
+}
+
+type BarrelManPose = 'idle' | 'run0' | 'run1' | 'tucked' | 'plant';
+
+function drawBarrelBody(grid: string[][], x: number, y: number): void {
+  drawFrame(grid, x, y, 11, 10, 'e');
+  drawRect(grid, x + 1, y + 2, 9, 1, 'd');
+  drawRect(grid, x + 1, y + 7, 9, 1, 'd');
+  drawRect(grid, x + 3, y + 1, 1, 8, 'o');
+  drawRect(grid, x + 7, y + 1, 1, 8, 'o');
+}
+
+function makeBarrelManSprite(pose: BarrelManPose): string[] {
+  const grid = makeGrid(18, 24);
+
+  if (pose === 'tucked') {
+    drawFrame(grid, 2, 5, 14, 10, 'e');
+    drawRect(grid, 3, 7, 12, 1, 'd');
+    drawRect(grid, 3, 12, 12, 1, 'd');
+    drawRect(grid, 5, 6, 1, 8, 'o');
+    drawRect(grid, 11, 6, 1, 8, 'o');
+    drawRect(grid, 6, 8, 5, 4, 's');
+    drawRect(grid, 6, 11, 5, 2, 'w');
+    return gridRows(grid);
+  }
+
+  if (pose === 'plant') {
+    drawRect(grid, 7, 0, 2, 8, 'l');
+    drawRect(grid, 4, 2, 5, 2, 'l');
+    drawRect(grid, 8, 3, 5, 2, 'g');
+  }
+
+  drawFrame(grid, 6, 2, 6, 5, 's');
+  drawRect(grid, 5, 1, 8, 2, 'w');
+  drawRect(grid, 5, 6, 8, 4, 'w');
+  drawRect(grid, 7, 4, 1, 1, 'k');
+  drawRect(grid, 10, 4, 1, 1, 'k');
+  drawBarrelBody(grid, 4, 10);
+
+  const lanternY = pose === 'run1' ? 11 : 12;
+  drawRect(grid, 14, lanternY, 2, 4, 'y');
+  drawRect(grid, 13, lanternY - 1, 4, 1, 'k');
+  drawRect(grid, 13, lanternY + 4, 4, 1, 'k');
+
+  if (pose === 'run0') {
+    drawRect(grid, 3, 20, 3, 3, 's');
+    drawRect(grid, 10, 20, 4, 2, 's');
+  } else if (pose === 'run1') {
+    drawRect(grid, 4, 20, 4, 2, 's');
+    drawRect(grid, 11, 19, 3, 4, 's');
+  } else {
+    drawRect(grid, 5, 20, 3, 3, 's');
+    drawRect(grid, 10, 20, 3, 3, 's');
+  }
+
+  return gridRows(grid);
+}
+
 type MeditatorDancePose = 'left' | 'right';
 
 function makeMeditatorDanceSprite(pose: MeditatorDancePose): string[] {
@@ -223,6 +309,41 @@ function makeMeditatorDanceSprite(pose: MeditatorDancePose): string[] {
     drawRect(grid, 11, 15, 5, 3, 'a');
   }
   drawRect(grid, 4, 18, 12, 2, 'k');
+  return gridRows(grid);
+}
+
+type MeditatorPose = 'meditate' | 'point';
+
+function drawSerpentCanopy(grid: string[][]): void {
+  drawFrame(grid, 1, 1, 5, 6, 'g');
+  drawFrame(grid, 5, 0, 5, 7, 'l');
+  drawFrame(grid, 10, 0, 5, 7, 'l');
+  drawFrame(grid, 14, 1, 5, 6, 'g');
+  drawRect(grid, 3, 4, 1, 1, 'y');
+  drawRect(grid, 7, 3, 1, 1, 'y');
+  drawRect(grid, 12, 3, 1, 1, 'y');
+  drawRect(grid, 16, 4, 1, 1, 'y');
+}
+
+function makeMeditatorSprite(pose: MeditatorPose): string[] {
+  const grid = makeGrid(20, 22);
+  drawSerpentCanopy(grid);
+  drawFrame(grid, 7, 5, 6, 6, 's');
+  drawRect(grid, 8, 8, 1, 1, 'k');
+  drawRect(grid, 11, 8, 1, 1, 'k');
+  drawFrame(grid, 4, 11, 12, 6, 'p');
+  drawRect(grid, 8, 13, 4, 2, 'y');
+  if (pose === 'point') {
+    drawRect(grid, 14, 11, 5, 3, 'p');
+    drawRect(grid, 17, 10, 2, 2, 's');
+    drawRect(grid, 1, 14, 5, 3, 'p');
+  } else {
+    drawRect(grid, 1, 13, 5, 3, 'p');
+    drawRect(grid, 14, 13, 5, 3, 'p');
+  }
+  drawRect(grid, 3, 17, 6, 2, 'a');
+  drawRect(grid, 11, 17, 6, 2, 'a');
+  drawRect(grid, 4, 19, 12, 2, 'k');
   return gridRows(grid);
 }
 
@@ -379,6 +500,7 @@ export const SPRITES = {
     '..................',
     '..................',
   ],
+  hero_hurt_0: makeHeroHurtSprite(),
   heart_0: [
     '.rr...rr.',
     'rrrr.rrrr',
@@ -401,10 +523,10 @@ export const SPRITES = {
   ],
   npc_test_0: [
     '.....kkkk.....',
-    '....kppppk....',
-    '...kppppppk...',
-    '...kpsspppk...',
-    '...kpsswppk...',
+    '....khhhhk....',
+    '...khhhhssk...',
+    '...khsswssk...',
+    '...khsssssk...',
     '....kssssk....',
     '.....kssk.....',
     '....kkggkk....',
@@ -412,14 +534,14 @@ export const SPRITES = {
     '..kgggyggggk..',
     '..kggggggggk..',
     '...kggkkggk...',
-    '....kekkek....',
-    '....kekkek....',
-    '....kekkek....',
-    '....kekkek....',
-    '....kekkek....',
-    '....krkkrk....',
-    '...krrkkrrk...',
-    '...kkkkkkkk...',
+    '..kkggaaggkk..',
+    '.kggaa..aagk..',
+    '.kaa......aak.',
+    '..kek....kek..',
+    '..kek....kek..',
+    '..krk....krk..',
+    '.krrk....krrk.',
+    '.kkkk....kkkk.',
     '..............',
     '..............',
   ],
@@ -513,184 +635,13 @@ export const SPRITES = {
     'ddddddddkddddddd',
     'dddddddddddddddd',
   ],
-  barrelman_idle_0: [
-    '..................',
-    '.......kkkk.......',
-    '......keeeek......',
-    '.....keeeeek......',
-    '.....keesssk......',
-    '.....kesswsk......',
-    '......ksssk.......',
-    '.....kkbbkk.......',
-    '....kbbbbbbk......',
-    '....kbbbybbk......',
-    '....kbbbbbbk......',
-    '.....kbbbbk.......',
-    '....kkeeeekk......',
-    '...keeeeeeeek.....',
-    '...keeekkkeek.....',
-    '...keeeeeeeek.....',
-    '....keeeeeek......',
-    '.....kekkek.......',
-    '.....kekkek.......',
-    '.....kekkek.......',
-    '.....krkkrk.......',
-    '....krrkkrrk......',
-    '....kkkkkkkk......',
-    '..................',
-  ],
-  barrelman_run_0: [
-    '..................',
-    '.......kkkk.......',
-    '......keeeek......',
-    '.....keeeeek......',
-    '.....keesssk......',
-    '.....kesswsk......',
-    '......ksssk.......',
-    '....kkkbbk........',
-    '...kbbbbbbk.......',
-    '...kbbbybbbk......',
-    '...kbbbbbbbk......',
-    '....kbbbbbk.......',
-    '....kkeeeekk......',
-    '...keeeeeeeek.....',
-    '..keeeekkkeek.....',
-    '..keeeeeeeeek.....',
-    '...keeeeeek.......',
-    '....kekkek........',
-    '...kek..kek.......',
-    '..kek....kek......',
-    '..krk....krk......',
-    '.krrk....krrk.....',
-    '.kkkk....kkkk.....',
-    '..................',
-  ],
-  barrelman_run_1: [
-    '..................',
-    '.......kkkk.......',
-    '......keeeek......',
-    '.....keeeeek......',
-    '.....keesssk......',
-    '.....kesswsk......',
-    '......ksssk.......',
-    '........kbbkkk....',
-    '......kbbbbbbk....',
-    '.....kbbbybbbk....',
-    '.....kbbbbbbbk....',
-    '......kbbbbbk.....',
-    '....kkeeeekk......',
-    '...keeeeeeeek.....',
-    '...keeekkkeek.....',
-    '...keeeeeeeek.....',
-    '.....keeeeek......',
-    '......kekkek......',
-    '.....kek..kek.....',
-    '....kek....kek....',
-    '....krk....krk....',
-    '...krrk....krrk...',
-    '...kkkk....kkkk...',
-    '..................',
-  ],
-  barrelman_tucked_0: [
-    '..................',
-    '..................',
-    '..................',
-    '.....kkkkkkkk.....',
-    '...kkeeeeeeeekk...',
-    '..keeeeeeeeeeeek..',
-    '.keeeekkkkkeeeek..',
-    '.keeeksssskeeeek..',
-    '.keeekssswkeeeek..',
-    '.keeeeksskeeeeek..',
-    '.keeeeeeeeeeeeek..',
-    '.keeeeeeeeeeeeek..',
-    '.keeeekkkkkeeeek..',
-    '..keeeeeeeeeeeek..',
-    '...kkeeeeeeeekk...',
-    '.....kkkkkkkk.....',
-    '..................',
-    '..................',
-    '..................',
-    '..................',
-    '..................',
-    '..................',
-    '..................',
-    '..................',
-  ],
-  barrelman_plant_0: [
-    '..................',
-    '......l..l........',
-    '.....ll..ll.......',
-    '......llll........',
-    '.......ll.........',
-    '.......ll.........',
-    '.....kkkkkk.......',
-    '....kggggggk......',
-    '...kggglggggk.....',
-    '...kgggglgggk.....',
-    '....kggggggk......',
-    '.....kggggk.......',
-    '....kkeeeekk......',
-    '...keeeeeeeek.....',
-    '...keeekkkeek.....',
-    '...keeeeeeeek.....',
-    '....keeeeeek......',
-    '.....keeeek.......',
-    '......keek........',
-    '......keek........',
-    '......keek........',
-    '.....keeeek.......',
-    '.....kkkkkk.......',
-    '..................',
-  ],
-  meditator_meditate_0: [
-    '....................',
-    '.........kk.........',
-    '.......kkeekk.......',
-    '......keeeeek.......',
-    '......keessk........',
-    '.......kssk.........',
-    '........kk..........',
-    '......kkppkk........',
-    '.....kppppppk.......',
-    '....kpppyppppk......',
-    '....kppppppppk......',
-    '.....kppkkppk.......',
-    '....kkkkaakkkk......',
-    '..kkaaaaaaaakk......',
-    '.kaaaakkaaaak.......',
-    'kaaaak..kaaaak......',
-    'kaak......kaak......',
-    '.kk........kk.......',
-    '....................',
-    '....................',
-    '....................',
-    '....................',
-  ],
-  meditator_point_0: [
-    '....................',
-    '.........kk.........',
-    '.......kkeekk.......',
-    '......keeeeek.......',
-    '......keessk........',
-    '.......kssk.........',
-    '........kk..........',
-    '......kkppkkkk......',
-    '.....kpppppppkkk....',
-    '....kpppyppppkkk....',
-    '....kppppppppk......',
-    '.....kppkkppk.......',
-    '....kkkkaakkkk......',
-    '..kkaaaaaaaakk......',
-    '.kaaaakkaaaak.......',
-    'kaaaak..kaaaak......',
-    'kaak......kaak......',
-    '.kk........kk.......',
-    '....................',
-    '....................',
-    '....................',
-    '....................',
-  ],
+  barrelman_idle_0: makeBarrelManSprite('idle'),
+  barrelman_run_0: makeBarrelManSprite('run0'),
+  barrelman_run_1: makeBarrelManSprite('run1'),
+  barrelman_tucked_0: makeBarrelManSprite('tucked'),
+  barrelman_plant_0: makeBarrelManSprite('plant'),
+  meditator_meditate_0: makeMeditatorSprite('meditate'),
+  meditator_point_0: makeMeditatorSprite('point'),
   meditator_dance_0: makeMeditatorDanceSprite('left'),
   meditator_dance_1: makeMeditatorDanceSprite('right'),
   door_0: [

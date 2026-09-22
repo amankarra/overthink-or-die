@@ -184,6 +184,32 @@ export class BarrelScene extends Phaser.Scene {
     const graphics = this.add.graphics().setDepth(0);
     graphics.fillStyle(0x758b8d, 1);
     graphics.fillRect(0, 0, TUNING.barrelScene.worldWidth, TUNING.barrelScene.groundY);
+    graphics.fillStyle(0x9a7856, 0.45);
+    for (let x = -80; x < TUNING.barrelScene.worldWidth + 160; x += 260) {
+      graphics.fillPoints(
+        [
+          new Phaser.Geom.Point(x, TUNING.barrelScene.groundY - 52),
+          new Phaser.Geom.Point(x + 90, TUNING.barrelScene.groundY - 96),
+          new Phaser.Geom.Point(x + 210, TUNING.barrelScene.groundY - 48),
+          new Phaser.Geom.Point(x + 280, TUNING.barrelScene.groundY),
+          new Phaser.Geom.Point(x - 60, TUNING.barrelScene.groundY),
+        ],
+        true,
+      );
+    }
+    graphics.fillStyle(0x5c625f, 0.34);
+    for (let x = 40; x < TUNING.barrelScene.worldWidth + 220; x += 340) {
+      graphics.fillPoints(
+        [
+          new Phaser.Geom.Point(x, TUNING.barrelScene.groundY - 34),
+          new Phaser.Geom.Point(x + 120, TUNING.barrelScene.groundY - 72),
+          new Phaser.Geom.Point(x + 250, TUNING.barrelScene.groundY - 30),
+          new Phaser.Geom.Point(x + 330, TUNING.barrelScene.groundY),
+          new Phaser.Geom.Point(x - 40, TUNING.barrelScene.groundY),
+        ],
+        true,
+      );
+    }
 
     let shadeStart = 0;
     for (const zone of LIGHT_ZONES) {

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const scenes = ['test', 'title', 'intro', 'barrel', 'illusion', 'boss', 'ending'] as const;
+const scenes = ['test', 'title', 'intro', 'barrel', 'illusion', 'boss', 'ending', 'gallery'] as const;
 
 for (const scene of scenes) {
   test(`loads ${scene}`, async ({ page }) => {
