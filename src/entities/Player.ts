@@ -12,6 +12,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private readonly keys?: PlayerKeys;
   private controlsEnabled = true;
   private ignoreJumpUntilReleased = false;
+  private wasGrounded = true;
+  private squashTween?: Phaser.Tweens.Tween;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'hero_idle_0');
@@ -70,6 +72,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   update(): void {
     const body = this.body as Phaser.Physics.Arcade.Body;
     const jumpKey = this.keys?.jump;
+    const grounded = body.blocked.down;
 
     if (this.ignoreJumpUntilReleased && !jumpKey?.isDown) {
       this.ignoreJumpUntilReleased = false;
@@ -99,6 +102,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (jumpPressed && body.blocked.down) {
       this.setVelocityY(TUNING.player.jumpVelocity);
+      this.playSquash(0.82, 1.14, 110);
     }
 
     if (!body.blocked.down) {
@@ -108,5 +112,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     } else {
       this.play('hero-idle', true);
     }
+
+    if (!this.wasGrounded && grounded && body.velocity.y >= 0) {
+      this.playSquash(1.14, 0.84, 120);
+    }
+    this.wasGrounded = grounded && !jumpPressed;
+  }
+
+  private playSquash(scaleX: number, scaleY: number, duration: number): void {
+    this.squashTween?.stop();
+    this.setScale(scaleX, scaleY);
+    this.squashTween = this.scene.tweens.add({
+      targets: this,
+      scaleX: 1,
+      scaleY: 1,
+      duration,
+      ease: 'Quad.easeOut',
+    });
   }
 }

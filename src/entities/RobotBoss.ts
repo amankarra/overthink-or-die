@@ -17,6 +17,12 @@ type LaserProjectile = {
   vy: number;
 };
 
+type RobotBossHooks = {
+  onFootstep?: () => void;
+  onKickActive?: () => void;
+  onLaserFired?: (x: number, y: number) => void;
+};
+
 export class RobotBoss {
   readonly sprite: Phaser.GameObjects.Sprite;
   readonly kickHitbox: Phaser.GameObjects.Rectangle;
@@ -28,11 +34,13 @@ export class RobotBoss {
   private fightActive = false;
   private laserTarget?: Phaser.Math.Vector2;
   private laserFired = false;
+  private walkStepMs = 0;
 
   constructor(
     private readonly scene: Phaser.Scene,
     x: number,
     y: number,
+    private readonly hooks: RobotBossHooks = {},
   ) {
     this.sprite = scene.add.sprite(x, y, 'robot_idle_0').setOrigin(0.5, 1).setDepth(18);
     this.kickHitbox = scene.add
@@ -180,6 +188,7 @@ export class RobotBoss {
   private transitionTo(state: RobotBossState, durationMs: number, player?: Player): void {
     this.state = state;
     this.stateMs = durationMs;
+    this.walkStepMs = 0;
     this.kickHitbox.setVisible(false);
     this.laserTarget = undefined;
     this.laserFired = false;
@@ -202,6 +211,7 @@ export class RobotBoss {
         this.sprite.setTexture('robot_kick_0');
         this.updateKickHitboxPosition();
         this.kickHitbox.setVisible(true);
+        this.hooks.onKickActive?.();
         break;
       case 'LASER_WINDUP':
         this.sprite.stop();
@@ -229,6 +239,11 @@ export class RobotBoss {
       TUNING.bossScene.robotMinX,
       TUNING.bossScene.robotMaxX,
     );
+    this.walkStepMs += deltaMs;
+    if (this.walkStepMs >= 360) {
+      this.walkStepMs = 0;
+      this.hooks.onFootstep?.();
+    }
   }
 
   private distanceTo(playerX: number): number {
@@ -263,6 +278,7 @@ export class RobotBoss {
       vx: direction.x * TUNING.robot.laserProjectileSpeed,
       vy: direction.y * TUNING.robot.laserProjectileSpeed,
     });
+    this.hooks.onLaserFired?.(origin.x, origin.y);
   }
 
   private updateLasers(deltaMs: number): void {

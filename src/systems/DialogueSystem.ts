@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
+import { TUNING } from '../config';
 import type { Player } from '../entities/Player';
+import { AudioManager } from './AudioManager';
 import { DialogueBox } from '../ui/DialogueBox';
 
 export type DialogueLine = {
@@ -11,6 +13,10 @@ export class DialogueSystem {
   private lines: DialogueLine[] = [];
   private index = 0;
   private done?: () => void;
+  private currentLine?: DialogueLine;
+  private visibleChars = 0;
+  private revealTimer?: Phaser.Time.TimerEvent;
+  private readonly audio: AudioManager;
   private readonly handleAdvance = (): void => this.advance();
 
   constructor(
@@ -18,6 +24,7 @@ export class DialogueSystem {
     private readonly box: DialogueBox,
     private readonly player?: Player,
   ) {
+    this.audio = new AudioManager(scene);
     this.box.on(Phaser.Input.Events.POINTER_DOWN, this.handleAdvance);
     this.scene.input.keyboard?.on('keydown-SPACE', this.handleAdvance);
     this.scene.input.keyboard?.on('keydown-E', this.handleAdvance);
@@ -49,6 +56,11 @@ export class DialogueSystem {
       return;
     }
 
+    if (this.isRevealing()) {
+      this.completeCurrentLine();
+      return;
+    }
+
     this.index += 1;
     if (this.index >= this.lines.length) {
       this.close();
@@ -60,6 +72,8 @@ export class DialogueSystem {
 
   private close(): void {
     const done = this.done;
+    this.clearRevealTimer();
+    this.currentLine = undefined;
     this.lines = [];
     this.done = undefined;
     this.box.hide();
@@ -73,6 +87,48 @@ export class DialogueSystem {
     if (!line) {
       return;
     }
-    this.box.showLine(line.speaker, line.text);
+
+    this.clearRevealTimer();
+    this.currentLine = line;
+    this.visibleChars = 0;
+    this.audio.play('blip', { volume: 0.45 });
+    this.box.showLine(line.speaker, '');
+
+    if (line.text.length === 0) {
+      return;
+    }
+
+    this.revealTimer = this.scene.time.addEvent({
+      delay: TUNING.dialogue.typewriterCharMs,
+      repeat: line.text.length - 1,
+      callback: () => {
+        if (!this.currentLine) {
+          return;
+        }
+        this.visibleChars += 1;
+        this.box.setBodyText(this.currentLine.text.slice(0, this.visibleChars));
+        if (!this.isRevealing()) {
+          this.revealTimer = undefined;
+        }
+      },
+    });
+  }
+
+  private isRevealing(): boolean {
+    return Boolean(this.currentLine && this.visibleChars < this.currentLine.text.length);
+  }
+
+  private completeCurrentLine(): void {
+    if (!this.currentLine) {
+      return;
+    }
+    this.clearRevealTimer();
+    this.visibleChars = this.currentLine.text.length;
+    this.box.setBodyText(this.currentLine.text);
+  }
+
+  private clearRevealTimer(): void {
+    this.revealTimer?.remove(false);
+    this.revealTimer = undefined;
   }
 }

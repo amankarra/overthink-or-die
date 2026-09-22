@@ -17,6 +17,9 @@ export const TUNING = {
   interaction: {
     radius: 54,
   },
+  dialogue: {
+    typewriterCharMs: 18,
+  },
   barrelMan: {
     speeds: {
       slow: 35,

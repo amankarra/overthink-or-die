@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { TUNING } from '../config';
+import { AudioManager } from '../systems/AudioManager';
 
 export type RouteName =
   | 'title'
@@ -62,6 +63,7 @@ export function fadeRestart(scene: Phaser.Scene): void {
 
 export function setupSceneHotkeys(scene: Phaser.Scene): void {
   scene.data.set('__transitioning', false);
+  AudioManager.installSceneControls(scene);
 
   const keyboard = scene.input.keyboard;
   if (!keyboard) {

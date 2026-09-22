@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH, TUNING } from '../config';
 import { Player } from '../entities/Player';
+import { AudioManager } from '../systems/AudioManager';
 import { DebugOverlay } from '../systems/DebugOverlay';
 import { DialogueSystem } from '../systems/DialogueSystem';
 import { InteractionSystem } from '../systems/InteractionSystem';
@@ -21,6 +22,7 @@ const DOOR_LABELS = [
 ] as const;
 
 export class IllusionScene extends Phaser.Scene {
+  private audio?: AudioManager;
   private player?: Player;
   private meditator?: Phaser.GameObjects.Image;
   private interaction?: InteractionSystem;
@@ -43,6 +45,8 @@ export class IllusionScene extends Phaser.Scene {
   create(): void {
     this.resetRunState();
     setupSceneHotkeys(this);
+    this.audio = new AudioManager(this);
+    this.audio.loop('music_level', { volume: 0.22 });
     this.cameras.main.setBackgroundColor('#18202f');
     this.physics.world.setBounds(0, 0, TUNING.illusionScene.worldWidth, GAME_HEIGHT);
     this.cameras.main.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -329,6 +333,7 @@ export class IllusionScene extends Phaser.Scene {
     this.failingDoor = true;
     this.player?.setControlsEnabled(false);
     this.setFailureCount(this.failureCount + 1);
+    this.audio?.play('door_fail');
     fadeToScene(this, ROUTE_TO_SCENE_KEY.illusion);
   }
 

@@ -42,6 +42,10 @@ export class DialogueBox extends Phaser.GameObjects.Container {
     this.setVisible(true);
   }
 
+  setBodyText(text: string): void {
+    this.bodyText.setText(text);
+  }
+
   hide(): void {
     this.setVisible(false);
   }

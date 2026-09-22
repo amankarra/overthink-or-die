@@ -36,6 +36,7 @@ export class BossScene extends Phaser.Scene {
     this.resetRunState();
     setupSceneHotkeys(this);
     this.audio = new AudioManager(this);
+    this.audio.loop('music_level', { volume: 0.22 });
     this.cameras.main.setBackgroundColor('#78a4ad');
     this.physics.world.setBounds(0, 0, TUNING.bossScene.worldWidth, GAME_HEIGHT);
     this.cameras.main.setBounds(0, 0, TUNING.bossScene.worldWidth, GAME_HEIGHT);
@@ -181,6 +182,14 @@ export class BossScene extends Phaser.Scene {
       this,
       TUNING.bossScene.robotStartX,
       TUNING.bossScene.groundY,
+      {
+        onFootstep: () => this.cameras.main.shake(80, 0.004),
+        onKickActive: () => this.cameras.main.shake(140, 0.008),
+        onLaserFired: (x, y) => {
+          this.audio?.play('laser', { volume: 0.75 });
+          this.sparkAt(x, y, 0xe84855);
+        },
+      },
     );
     this.robot.sprite.setVisible(true);
     this.footDoor = this.add
@@ -373,6 +382,7 @@ export class BossScene extends Phaser.Scene {
     this.hp -= 1;
     this.updateHud();
     this.audio?.play('hit');
+    this.cameras.main.shake(110, 0.008);
 
     if (this.hp <= 0) {
       this.lockPlayer();
@@ -383,6 +393,7 @@ export class BossScene extends Phaser.Scene {
     this.invulnerable = true;
     this.playerControlEnabled = false;
     this.player.setControlsEnabled(false);
+    this.player.setTexture('hero_hurt_0');
     this.player.setTint(0xe84855);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     const direction = this.player.x < sourceX ? -1 : 1;
@@ -403,6 +414,7 @@ export class BossScene extends Phaser.Scene {
       if (!this.winStarted && this.hp > 0 && this.player) {
         this.playerControlEnabled = true;
         this.player.setControlsEnabled(true);
+        this.player.setTexture('hero_idle_0');
       }
     });
 
@@ -465,8 +477,10 @@ export class BossScene extends Phaser.Scene {
   private toppleSlab(): void {
     this.slab?.setTexture('slab_fallen_0');
     this.audio?.play('bonk');
+    this.cameras.main.shake(180, 0.009);
     this.cableLive = false;
     this.sparkAt(TUNING.bossScene.slabX + 18, TUNING.bossScene.groundY - 22);
+    this.debrisAt(TUNING.bossScene.slabX + 8, TUNING.bossScene.groundY - 22, 0x3b4451, 7);
     this.time.delayedCall(320, () => this.malfunctionRobot());
   }
 
@@ -476,7 +490,6 @@ export class BossScene extends Phaser.Scene {
     }
 
     this.cameras.main.shake(600, 0.012);
-    this.audio?.play('explosion');
     this.tweens.add({
       targets: this.robot.sprite,
       x: '+=4',
@@ -503,6 +516,9 @@ export class BossScene extends Phaser.Scene {
       return;
     }
 
+    this.audio?.play('explosion');
+    this.cameras.main.shake(480, 0.017);
+    this.debrisAt(this.robot.x, this.robot.y - 62, 0xf28f3b, 16);
     const boom = this.add
       .circle(this.robot.x, this.robot.y - 62, 8, 0xf6d743, 0.95)
       .setDepth(50);
@@ -518,13 +534,13 @@ export class BossScene extends Phaser.Scene {
     this.time.delayedCall(650, () => fadeToScene(this, ROUTE_TO_SCENE_KEY.ending));
   }
 
-  private sparkAt(x: number, y: number): void {
+  private sparkAt(x: number, y: number, color = 0xf6d743): void {
     if (!this.effectGraphics) {
       return;
     }
 
     const graphics = this.effectGraphics;
-    graphics.lineStyle(2, 0xf6d743, 1);
+    graphics.lineStyle(2, color, 1);
     for (let index = 0; index < 8; index += 1) {
       const angle = (Math.PI * 2 * index) / 8;
       graphics.lineBetween(
@@ -535,5 +551,28 @@ export class BossScene extends Phaser.Scene {
       );
     }
     this.time.delayedCall(120, () => graphics.clear());
+    this.debrisAt(x, y, color, 5);
+  }
+
+  private debrisAt(x: number, y: number, color: number, count: number): void {
+    const pieces = Array.from({ length: count }, (_value, index) => {
+      const angle = (Math.PI * 2 * index) / count + Phaser.Math.FloatBetween(-0.25, 0.25);
+      const distance = Phaser.Math.Between(12, 34);
+      const piece = this.add
+        .rectangle(x, y, 3, 3, index % 3 === 0 ? 0xffffff : color, 1)
+        .setDepth(55);
+      this.tweens.add({
+        targets: piece,
+        x: x + Math.cos(angle) * distance,
+        y: y + Math.sin(angle) * distance,
+        alpha: 0,
+        angle: Phaser.Math.Between(-180, 180),
+        duration: Phaser.Math.Between(260, 520),
+        ease: 'Quad.easeOut',
+        onComplete: () => piece.destroy(),
+      });
+      return piece;
+    });
+    this.time.delayedCall(560, () => pieces.forEach((piece) => piece.destroy()));
   }
 }

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, TUNING } from '../config';
 import { BarrelMan } from '../entities/BarrelMan';
 import { Player } from '../entities/Player';
+import { AudioManager } from '../systems/AudioManager';
 import { DebugOverlay } from '../systems/DebugOverlay';
 import { DialogueSystem } from '../systems/DialogueSystem';
 import { InteractionSystem } from '../systems/InteractionSystem';
@@ -32,6 +33,7 @@ const LIGHT_ZONES: LightZone[] = [
 ];
 
 export class BarrelScene extends Phaser.Scene {
+  private audio?: AudioManager;
   private player?: Player;
   private barrelMan?: BarrelMan;
   private interaction?: InteractionSystem;
@@ -55,6 +57,12 @@ export class BarrelScene extends Phaser.Scene {
   create(): void {
     this.resetRunState();
     setupSceneHotkeys(this);
+    this.audio = new AudioManager(this);
+    this.audio.loop('music_level', { volume: 0.22 });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.audio?.stop('hiss');
+      this.audio?.stop('roll');
+    });
     this.validateLightZones();
     this.cameras.main.setBackgroundColor('#647879');
     this.physics.world.setBounds(0, 0, TUNING.barrelScene.worldWidth, GAME_HEIGHT);
@@ -159,6 +167,7 @@ export class BarrelScene extends Phaser.Scene {
       ? TUNING.barrelMan.exposedSpeedMultiplier
       : 1;
 
+    this.updateExposureAudio(canExpose);
     this.barrelMan.update(delta, speedMultiplier, this.exposure);
     this.updateExposure(delta / 1000, canExpose);
     this.renderShadow(playerZone);
@@ -366,6 +375,8 @@ export class BarrelScene extends Phaser.Scene {
       !this.plantFailing
     ) {
       this.plantFailing = true;
+      this.audio?.stop('hiss');
+      this.leafPuffAt(this.barrelMan.x, this.barrelMan.y - 28);
       this.barrelMan.becomePlant();
       this.player?.setControlsEnabled(false);
       this.time.delayedCall(TUNING.barrelScene.plantRestartDelayMs, () => fadeRestart(this));
@@ -425,6 +436,8 @@ export class BarrelScene extends Phaser.Scene {
 
     if (this.barrelMan.isRunning && this.barrelMan.x >= TUNING.barrelScene.slideX) {
       this.barrelMan.startRolling();
+      this.audio?.stop('hiss');
+      this.audio?.loop('roll', { volume: 0.55 });
       this.exposure = 0;
       this.shadowGraphics?.clear();
     }
@@ -466,5 +479,38 @@ export class BarrelScene extends Phaser.Scene {
       left: playerLeft - shadowLength,
       right: playerRight,
     };
+  }
+
+  private updateExposureAudio(canExpose: boolean): void {
+    if (!this.audio) {
+      return;
+    }
+    if (canExpose) {
+      this.audio.loop('hiss', { volume: 0.2 });
+      return;
+    }
+    this.audio.stop('hiss');
+  }
+
+  private leafPuffAt(x: number, y: number): void {
+    const leaves = Array.from({ length: 9 }, (_value, index) => {
+      const angle = -Math.PI / 2 + Phaser.Math.FloatBetween(-1.1, 1.1);
+      const distance = Phaser.Math.Between(14, 30);
+      const leaf = this.add
+        .rectangle(x, y, 3, 2, index % 2 === 0 ? 0x9be56d : 0x4fb86a, 1)
+        .setDepth(45);
+      this.tweens.add({
+        targets: leaf,
+        x: x + Math.cos(angle) * distance,
+        y: y + Math.sin(angle) * distance,
+        alpha: 0,
+        angle: Phaser.Math.Between(-90, 90),
+        duration: 420,
+        ease: 'Quad.easeOut',
+        onComplete: () => leaf.destroy(),
+      });
+      return leaf;
+    });
+    this.time.delayedCall(500, () => leaves.forEach((leaf) => leaf.destroy()));
   }
 }

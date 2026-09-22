@@ -17,7 +17,9 @@ export class TitleScene extends Phaser.Scene {
   create(): void {
     this.started = false;
     this.cameras.main.setBackgroundColor('#090a14');
-    new AudioManager(this);
+    const audio = new AudioManager(this);
+    audio.stop('music_level');
+    audio.stop('music_dance');
     setupSceneHotkeys(this);
     this.debugOverlay = new DebugOverlay(this);
 

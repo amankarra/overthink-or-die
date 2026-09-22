@@ -13,7 +13,9 @@ export class EndingScene extends Phaser.Scene {
 
   create(): void {
     setupSceneHotkeys(this);
-    new AudioManager(this).loop('music_dance');
+    const audio = new AudioManager(this);
+    audio.stop('music_level');
+    audio.loop('music_dance', { volume: 0.36 });
     this.cameras.main.setBackgroundColor('#1f1f38');
     this.createAnimations();
     this.drawStage();
