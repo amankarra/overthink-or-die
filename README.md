@@ -1,2 +1,2 @@
 # overthink-or-die
-Overthing or Die!
+Overthink or Die!
