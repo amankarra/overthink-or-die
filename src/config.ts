@@ -45,8 +45,13 @@ export const TUNING = {
     plantRestartDelayMs: 900,
     shadeAlpha: 0.24,
     lightAlpha: 0.22,
+    shadowLengthMultiplier: 0.72,
     shadowHeight: 8,
     shadowYOffset: 2,
+    barrelRollSpeedX: 58,
+    barrelRollSpeedY: 42,
+    barrelRollRotationSpeed: 3.8,
+    minRollBeforeExitMs: 1000,
   },
   robot: {
     walkSpeed: 30,

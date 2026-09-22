@@ -94,9 +94,9 @@ export class BarrelMan extends Phaser.GameObjects.Sprite {
     }
 
     if (this.barrelState === 'rolling') {
-      this.x += 122 * deltaSeconds;
-      this.y += 82 * deltaSeconds;
-      this.rotation += 7.5 * deltaSeconds;
+      this.x += TUNING.barrelScene.barrelRollSpeedX * deltaSeconds;
+      this.y += TUNING.barrelScene.barrelRollSpeedY * deltaSeconds;
+      this.rotation += TUNING.barrelScene.barrelRollRotationSpeed * deltaSeconds;
       return;
     }
 
@@ -117,13 +117,8 @@ export class BarrelMan extends Phaser.GameObjects.Sprite {
 
   private updateRunningVisual(exposure: number): void {
     if (exposure >= 2) {
-      this.stop();
-      this.setTexture('barrelman_plant_0');
       this.setTint(0xb8ff74);
-      return;
-    }
-
-    if (exposure >= 1) {
+    } else if (exposure >= 1) {
       this.setTint(0x99e86d);
     } else {
       this.clearTint();

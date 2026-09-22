@@ -47,12 +47,14 @@ export class BarrelScene extends Phaser.Scene {
   private plantFailing = false;
   private noPlantMode = false;
   private noPlantKey?: Phaser.Input.Keyboard.Key;
+  private rollStartedAt?: number;
 
   constructor() {
     super('BarrelScene');
   }
 
   create(): void {
+    this.resetRunState();
     setupSceneHotkeys(this);
     this.validateLightZones();
     this.cameras.main.setBackgroundColor('#647879');
@@ -111,6 +113,17 @@ export class BarrelScene extends Phaser.Scene {
         : 'none',
       noPlant: this.noPlantMode,
     }));
+  }
+
+  private resetRunState(): void {
+    this.exposure = 0;
+    this.protected = false;
+    this.currentZoneName = 'shade';
+    this.shadowSpan = undefined;
+    this.transitionStarted = false;
+    this.plantFailing = false;
+    this.noPlantMode = false;
+    this.rollStartedAt = undefined;
   }
 
   update(_time: number, delta: number): void {
@@ -387,11 +400,17 @@ export class BarrelScene extends Phaser.Scene {
     if (this.barrelMan.isRunning && this.barrelMan.x >= TUNING.barrelScene.slideX) {
       this.barrelMan.startRolling();
       this.exposure = 0;
+      this.rollStartedAt = this.time.now;
       this.shadowGraphics?.clear();
     }
 
+    const hasRolledLongEnough =
+      this.rollStartedAt !== undefined &&
+      this.time.now - this.rollStartedAt >= TUNING.barrelScene.minRollBeforeExitMs;
+
     if (
       this.barrelMan.isRolling &&
+      hasRolledLongEnough &&
       this.player.x >= TUNING.barrelScene.slideX - TUNING.player.width
     ) {
       this.transitionStarted = true;
@@ -409,7 +428,9 @@ export class BarrelScene extends Phaser.Scene {
       return { left: 0, right: 0 };
     }
 
-    const shadowLength = TUNING.player.height / Math.tan(Phaser.Math.DegToRad(zone.angle));
+    const shadowLength =
+      (TUNING.player.height / Math.tan(Phaser.Math.DegToRad(zone.angle))) *
+      TUNING.barrelScene.shadowLengthMultiplier;
     const playerLeft = this.player.x - TUNING.player.width / 2;
     const playerRight = this.player.x + TUNING.player.width / 2;
 
