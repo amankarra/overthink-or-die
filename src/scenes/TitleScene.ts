@@ -4,6 +4,8 @@ import { AudioManager } from '../systems/AudioManager';
 import { DebugOverlay } from '../systems/DebugOverlay';
 import { fadeToScene, ROUTE_TO_SCENE_KEY, setupSceneHotkeys } from '../util/sceneRouting';
 
+const SUBTITLE = 'a game about doors, shadows and robots';
+
 export class TitleScene extends Phaser.Scene {
   private debugOverlay?: DebugOverlay;
   private started = false;
@@ -13,6 +15,7 @@ export class TitleScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.started = false;
     this.cameras.main.setBackgroundColor('#090a14');
     new AudioManager(this);
     setupSceneHotkeys(this);
@@ -29,8 +32,17 @@ export class TitleScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    const touchOnly = this.isTouchOnly();
     this.add
+      .text(GAME_WIDTH / 2, 132, SUBTITLE, {
+        fontFamily: 'monospace',
+        fontSize: '9px',
+        color: '#87a96b',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
+    const touchOnly = this.isTouchOnly();
+    const startText = this.add
       .text(
         GAME_WIDTH / 2,
         172,
@@ -44,13 +56,15 @@ export class TitleScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
 
-    this.add
-      .text(GAME_WIDTH / 2, 225, 'A SHORT RETRO PANIC PLATFORMER', {
-        fontFamily: 'monospace',
-        fontSize: '9px',
-        color: '#87a96b',
-      })
-      .setOrigin(0.5);
+    if (!touchOnly) {
+      this.tweens.add({
+        targets: startText,
+        alpha: 0.25,
+        duration: 520,
+        yoyo: true,
+        repeat: -1,
+      });
+    }
 
     if (touchOnly) {
       return;
@@ -61,7 +75,7 @@ export class TitleScene extends Phaser.Scene {
         return;
       }
       this.started = true;
-      fadeToScene(this, ROUTE_TO_SCENE_KEY.barrel);
+      fadeToScene(this, ROUTE_TO_SCENE_KEY.intro);
     };
 
     this.input.once(Phaser.Input.Events.POINTER_DOWN, start);

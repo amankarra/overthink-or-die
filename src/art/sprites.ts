@@ -127,6 +127,105 @@ function makeSlabSprite(pose: SlabPose): string[] {
   return gridRows(grid);
 }
 
+type HeroSilhouettePose = 'stand' | 'fall';
+
+function makeHeroSilhouetteSprite(pose: HeroSilhouettePose): string[] {
+  const grid = makeGrid(18, 28);
+  if (pose === 'fall') {
+    drawRect(grid, 2, 13, 14, 5, 'k');
+    drawRect(grid, 13, 9, 4, 5, 'k');
+    drawRect(grid, 4, 9, 3, 5, 'k');
+    drawRect(grid, 1, 15, 3, 2, 'k');
+    drawRect(grid, 8, 18, 3, 6, 'k');
+    drawRect(grid, 11, 19, 5, 3, 'k');
+    return gridRows(grid);
+  }
+
+  drawRect(grid, 6, 2, 6, 6, 'k');
+  drawRect(grid, 5, 8, 8, 9, 'k');
+  drawRect(grid, 3, 9, 3, 7, 'k');
+  drawRect(grid, 12, 9, 3, 7, 'k');
+  drawRect(grid, 6, 17, 3, 8, 'k');
+  drawRect(grid, 10, 17, 3, 8, 'k');
+  drawRect(grid, 5, 25, 4, 2, 'k');
+  drawRect(grid, 10, 25, 4, 2, 'k');
+  return gridRows(grid);
+}
+
+type GolferPose = 'idle' | 'backswing' | 'swing';
+
+function makeGolferSilhouetteSprite(pose: GolferPose): string[] {
+  const grid = makeGrid(22, 30);
+  drawRect(grid, 8, 3, 6, 6, 'k');
+  drawRect(grid, 7, 9, 8, 10, 'k');
+  drawRect(grid, 7, 19, 3, 8, 'k');
+  drawRect(grid, 12, 19, 3, 8, 'k');
+  drawRect(grid, 6, 27, 5, 2, 'k');
+  drawRect(grid, 12, 27, 5, 2, 'k');
+
+  if (pose === 'backswing') {
+    drawRect(grid, 2, 4, 9, 2, 'k');
+    drawRect(grid, 1, 2, 2, 8, 'k');
+    drawRect(grid, 11, 11, 4, 2, 'k');
+  } else if (pose === 'swing') {
+    drawRect(grid, 13, 12, 8, 2, 'k');
+    drawRect(grid, 19, 10, 2, 8, 'k');
+    drawRect(grid, 5, 10, 4, 2, 'k');
+  } else {
+    drawRect(grid, 3, 12, 5, 2, 'k');
+    drawRect(grid, 3, 12, 2, 14, 'k');
+    drawRect(grid, 13, 11, 4, 2, 'k');
+  }
+
+  return gridRows(grid);
+}
+
+type HeroDancePose = 'left' | 'right';
+
+function makeHeroDanceSprite(pose: HeroDancePose): string[] {
+  const grid = makeGrid(18, 28);
+  drawFrame(grid, 5, 1, 8, 7, 's');
+  drawRect(grid, 7, 4, 2, 1, 'w');
+  drawFrame(grid, 4, 8, 10, 8, 'c');
+  drawRect(grid, 8, 11, 2, 2, 'y');
+  if (pose === 'left') {
+    drawRect(grid, 1, 6, 4, 3, 'c');
+    drawRect(grid, 13, 10, 4, 3, 'c');
+    drawRect(grid, 5, 16, 3, 8, 'b');
+    drawRect(grid, 11, 15, 3, 8, 'b');
+  } else {
+    drawRect(grid, 1, 10, 4, 3, 'c');
+    drawRect(grid, 13, 6, 4, 3, 'c');
+    drawRect(grid, 4, 15, 3, 8, 'b');
+    drawRect(grid, 10, 16, 3, 8, 'b');
+  }
+  drawRect(grid, 4, 24, 5, 2, 'r');
+  drawRect(grid, 10, 24, 5, 2, 'r');
+  return gridRows(grid);
+}
+
+type MeditatorDancePose = 'left' | 'right';
+
+function makeMeditatorDanceSprite(pose: MeditatorDancePose): string[] {
+  const grid = makeGrid(20, 22);
+  drawFrame(grid, 7, 1, 7, 6, 's');
+  drawFrame(grid, 5, 7, 10, 7, 'p');
+  drawRect(grid, 9, 10, 2, 2, 'y');
+  if (pose === 'left') {
+    drawRect(grid, 1, 7, 5, 3, 'p');
+    drawRect(grid, 14, 11, 5, 3, 'p');
+    drawRect(grid, 4, 15, 5, 3, 'a');
+    drawRect(grid, 11, 16, 5, 3, 'a');
+  } else {
+    drawRect(grid, 1, 11, 5, 3, 'p');
+    drawRect(grid, 14, 7, 5, 3, 'p');
+    drawRect(grid, 4, 16, 5, 3, 'a');
+    drawRect(grid, 11, 15, 5, 3, 'a');
+  }
+  drawRect(grid, 4, 18, 12, 2, 'k');
+  return gridRows(grid);
+}
+
 export const SPRITES = {
   hero_idle_0: [
     '......kkkk........',
@@ -248,6 +347,8 @@ export const SPRITES = {
     '..................',
     '..................',
   ],
+  hero_silhouette_stand_0: makeHeroSilhouetteSprite('stand'),
+  hero_silhouette_fall_0: makeHeroSilhouetteSprite('fall'),
   hero_kick_0: [
     '......kkkk........',
     '.....khhhhk.......',
@@ -287,6 +388,16 @@ export const SPRITES = {
     '...rrr...',
     '....r....',
     '.........',
+  ],
+  hero_dance_0: makeHeroDanceSprite('left'),
+  hero_dance_1: makeHeroDanceSprite('right'),
+  golfer_silhouette_idle_0: makeGolferSilhouetteSprite('idle'),
+  golfer_silhouette_backswing_0: makeGolferSilhouetteSprite('backswing'),
+  golfer_silhouette_swing_0: makeGolferSilhouetteSprite('swing'),
+  golfball_0: [
+    'www',
+    'www',
+    'www',
   ],
   npc_test_0: [
     '.....kkkk.....',
@@ -580,6 +691,8 @@ export const SPRITES = {
     '....................',
     '....................',
   ],
+  meditator_dance_0: makeMeditatorDanceSprite('left'),
+  meditator_dance_1: makeMeditatorDanceSprite('right'),
   door_0: [
     '........................',
     '........kkkkkkkk........',

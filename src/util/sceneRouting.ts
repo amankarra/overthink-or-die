@@ -30,6 +30,10 @@ export function getRequestedSceneKey(): string {
 }
 
 export function fadeToScene(scene: Phaser.Scene, sceneKey: string): void {
+  if (scene.data.get('__transitioning')) {
+    return;
+  }
+  scene.data.set('__transitioning', true);
   scene.cameras.main.fadeOut(TUNING.fadeMs, 0, 0, 0);
   scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
     scene.scene.start(sceneKey);
@@ -38,6 +42,9 @@ export function fadeToScene(scene: Phaser.Scene, sceneKey: string): void {
 
 export function fadeRestart(scene: Phaser.Scene): void {
   const currentKey = scene.scene.key;
+  if (currentKey === ROUTE_TO_SCENE_KEY.ending) {
+    scene.registry.set('illusionFailures', 0);
+  }
   fadeToScene(scene, currentKey === ROUTE_TO_SCENE_KEY.ending ? ROUTE_TO_SCENE_KEY.title : currentKey);
 }
 
