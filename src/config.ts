@@ -49,7 +49,7 @@ export const TUNING = {
     shadowHeight: 8,
     shadowYOffset: 2,
     barrelRollSpeedX: 68,
-    barrelRollSlope: 0.42,
+    barrelRollSlope: 0.16,
     barrelRollRotationSpeed: 4.2,
   },
   robot: {

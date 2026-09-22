@@ -313,8 +313,10 @@ export class BarrelScene extends Phaser.Scene {
     );
 
     for (let x = slideX + 12; x < TUNING.barrelScene.worldWidth; x += 16) {
-      const y = TUNING.barrelScene.groundY + (x - slideX) * 0.45;
-      this.add.image(x, y, 'slide_tile_0').setDepth(3).setAngle(24);
+      const y =
+        TUNING.barrelScene.groundY +
+        (x - slideX) * TUNING.barrelScene.barrelRollSlope;
+      this.add.image(x, y, 'slide_tile_0').setDepth(3).setAngle(9);
     }
   }
 
