@@ -7,8 +7,10 @@ export type RouteName =
   | 'test'
   | 'intro'
   | 'barrel'
+  | 'barrel_side'
   | 'illusion'
   | 'boss'
+  | 'boss_side'
   | 'ending'
   | 'gallery';
 
@@ -16,9 +18,11 @@ export const ROUTE_TO_SCENE_KEY: Record<RouteName, string> = {
   title: 'TitleScene',
   test: 'TestScene',
   intro: 'GolfIntroScene',
-  barrel: 'BarrelScene',
+  barrel: TUNING.useGridBarrel ? 'BarrelGridScene' : 'BarrelSideScene',
+  barrel_side: 'BarrelSideScene',
   illusion: 'IllusionScene',
-  boss: 'BossScene',
+  boss: TUNING.useGridBoss ? 'BossArenaScene' : 'BossSideScene',
+  boss_side: 'BossSideScene',
   ending: 'EndingScene',
   gallery: 'GalleryScene',
 };
@@ -60,6 +64,7 @@ export function fadeRestart(scene: Phaser.Scene): void {
   const currentKey = scene.scene.key;
   if (currentKey === ROUTE_TO_SCENE_KEY.ending) {
     scene.registry.set('illusionFailures', 0);
+    scene.registry.set('bossCinematicSeen', false);
   }
   fadeToScene(scene, currentKey === ROUTE_TO_SCENE_KEY.ending ? ROUTE_TO_SCENE_KEY.title : currentKey);
 }

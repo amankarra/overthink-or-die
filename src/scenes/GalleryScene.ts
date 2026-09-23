@@ -13,7 +13,7 @@ const GALLERY_SCALE = 3;
 const GALLERY_PADDING = 14;
 const ANIMATIONS: GalleryAnimation[] = [
   { key: 'gallery-hero-walk', frames: ['hero_walk_0', 'hero_walk_1'] },
-  { key: 'gallery-hero-dance', frames: ['hero_dance_0', 'hero_dance_1'] },
+  { key: 'gallery-hero-dance', frames: ['hero_dance_0', 'hero_dance_1', 'hero_dance_2', 'hero_dance_3'] },
   {
     key: 'gallery-golfer-swing',
     frames: [
@@ -23,7 +23,10 @@ const ANIMATIONS: GalleryAnimation[] = [
     ],
   },
   { key: 'gallery-barrelman-run', frames: ['barrelman_run_0', 'barrelman_run_1'] },
-  { key: 'gallery-meditator-dance', frames: ['meditator_dance_0', 'meditator_dance_1'] },
+  {
+    key: 'gallery-meditator-dance',
+    frames: ['meditator_dance_0', 'meditator_dance_1', 'meditator_dance_2', 'meditator_dance_3'],
+  },
   { key: 'gallery-worshipper-pray', frames: ['worshipper_pray_0', 'worshipper_pray_1'] },
   { key: 'gallery-worshipper-walk', frames: ['worshipper_walk_0', 'worshipper_walk_1'] },
   { key: 'gallery-robot-walk', frames: ['robot_walk_0', 'robot_walk_1'] },

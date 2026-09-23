@@ -4,9 +4,11 @@ import { PHASER_CONFIG } from './config';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { GolfIntroScene } from './scenes/GolfIntroScene';
-import { BarrelScene } from './scenes/BarrelScene';
+import { BarrelGridScene } from './scenes/BarrelGridScene';
+import { BarrelSideScene } from './scenes/BarrelSideScene';
 import { IllusionScene } from './scenes/IllusionScene';
-import { BossScene } from './scenes/BossScene';
+import { BossArenaScene } from './scenes/BossArenaScene';
+import { BossSideScene } from './scenes/BossSideScene';
 import { EndingScene } from './scenes/EndingScene';
 
 const devScenes = import.meta.env.DEV
@@ -22,9 +24,11 @@ new Phaser.Game({
     BootScene,
     TitleScene,
     GolfIntroScene,
-    BarrelScene,
+    BarrelGridScene,
+    BarrelSideScene,
     IllusionScene,
-    BossScene,
+    BossArenaScene,
+    BossSideScene,
     EndingScene,
     ...devScenes,
   ],

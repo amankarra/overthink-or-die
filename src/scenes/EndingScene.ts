@@ -31,8 +31,13 @@ export class EndingScene extends Phaser.Scene {
     if (!this.anims.exists('hero-dance')) {
       this.anims.create({
         key: 'hero-dance',
-        frames: [{ key: 'hero_dance_0' }, { key: 'hero_dance_1' }],
-        frameRate: 4,
+        frames: [
+          { key: 'hero_dance_0' },
+          { key: 'hero_dance_1' },
+          { key: 'hero_dance_2' },
+          { key: 'hero_dance_3' },
+        ],
+        frameRate: 6,
         repeat: -1,
       });
     }
@@ -40,8 +45,13 @@ export class EndingScene extends Phaser.Scene {
     if (!this.anims.exists('meditator-dance')) {
       this.anims.create({
         key: 'meditator-dance',
-        frames: [{ key: 'meditator_dance_0' }, { key: 'meditator_dance_1' }],
-        frameRate: 4,
+        frames: [
+          { key: 'meditator_dance_0' },
+          { key: 'meditator_dance_1' },
+          { key: 'meditator_dance_2' },
+          { key: 'meditator_dance_3' },
+        ],
+        frameRate: 6,
         repeat: -1,
       });
     }
@@ -57,7 +67,7 @@ export class EndingScene extends Phaser.Scene {
     graphics.fillRect(0, TUNING.endingScene.groundY, GAME_WIDTH, 24);
 
     this.add
-      .text(GAME_WIDTH / 2, 58, 'THE END', {
+      .text(GAME_WIDTH / 2, 58, 'Did you overthink?', {
         fontFamily: 'monospace',
         fontSize: '30px',
         color: '#ffffff',
@@ -90,10 +100,12 @@ export class EndingScene extends Phaser.Scene {
     const hero = this.add
       .sprite(TUNING.endingScene.heroX, TUNING.endingScene.actorY, 'hero_idle_0')
       .setOrigin(0.5, 1)
+      .setScale(1.18)
       .setDepth(10);
     const barrelMan = this.add
       .sprite(TUNING.endingScene.barrelStartX, TUNING.endingScene.actorY, 'barrelman_run_0')
       .setOrigin(0.5, 1)
+      .setScale(1.12)
       .setDepth(10);
     const meditator = this.add
       .sprite(
@@ -102,6 +114,7 @@ export class EndingScene extends Phaser.Scene {
         'meditator_point_0',
       )
       .setOrigin(0.5, 1)
+      .setScale(1.3)
       .setDepth(10)
       .setFlipX(true);
 
@@ -126,6 +139,33 @@ export class EndingScene extends Phaser.Scene {
       hero.play('hero-dance');
       barrelMan.play('barrelman-run');
       meditator.play('meditator-dance');
+      this.tweens.add({
+        targets: hero,
+        y: TUNING.endingScene.actorY - 7,
+        angle: -6,
+        duration: 170,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Quad.easeInOut',
+      });
+      this.tweens.add({
+        targets: barrelMan,
+        y: TUNING.endingScene.actorY - 5,
+        angle: 9,
+        duration: 130,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Quad.easeInOut',
+      });
+      this.tweens.add({
+        targets: meditator,
+        y: TUNING.endingScene.actorY - 8,
+        angle: 7,
+        duration: 150,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Quad.easeInOut',
+      });
     });
   }
 }

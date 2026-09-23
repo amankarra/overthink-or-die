@@ -4,7 +4,16 @@ declare const process: {
   env: Record<string, string | undefined>;
 };
 
-const prodScenes = ['title', 'intro', 'barrel', 'illusion', 'boss', 'ending'] as const;
+const prodScenes = [
+  'title',
+  'intro',
+  'barrel',
+  'barrel_side',
+  'illusion',
+  'boss',
+  'boss_side',
+  'ending',
+] as const;
 const devScenes = ['test', ...prodScenes, 'gallery'] as const;
 const scenes = process.env.SMOKE_PROD === '1' ? prodScenes : devScenes;
 
