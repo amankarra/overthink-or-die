@@ -59,10 +59,11 @@ export class BarrelSideScene extends Phaser.Scene {
     this.resetRunState();
     setupSceneHotkeys(this);
     this.audio = new AudioManager(this);
-    this.audio.loop('music_level', { volume: 0.22 });
+    this.audio.loop('diogenes_music', { volume: 0.34 });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.audio?.stop('hiss');
       this.audio?.stop('roll');
+      this.audio?.stop('diogenes_music');
     });
     this.validateLightZones();
     this.cameras.main.setBackgroundColor('#647879');
@@ -102,7 +103,7 @@ export class BarrelSideScene extends Phaser.Scene {
     this.interaction = new InteractionSystem(this, this.player, this.barrelMan, this.speakButton, dialogue, () => {
       dialogue.start(
         [
-          { speaker: 'HERO', text: 'Where am I?' },
+          { speaker: 'NOWHERE MAN', text: 'Where am I?' },
           { speaker: 'DIOGENES', text: 'In my way. Now let us wash some lettuce.' },
         ],
         () => this.barrelMan?.startRunning(),

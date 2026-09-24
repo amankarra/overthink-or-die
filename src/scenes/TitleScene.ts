@@ -17,7 +17,14 @@ export class TitleScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#090a14');
     const audio = new AudioManager(this);
     audio.stop('music_level');
+    audio.stop('diogenes_music');
+    audio.stop('nagarjuna_music');
+    audio.stop('cultists_music');
+    audio.stop('robo_incoming');
+    audio.stop('robo_why');
+    audio.stop('robo_bye');
     audio.stop('music_dance');
+    audio.stop('ending_nowhere_man');
     setupSceneHotkeys(this);
     this.debugOverlay = new DebugOverlay(this);
 
@@ -32,11 +39,20 @@ export class TitleScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    this.add
+      .text(GAME_WIDTH / 2, 148, 'ADVENTURES OF A REAL NOWHERE MAN', {
+        fontFamily: 'monospace',
+        fontSize: '10px',
+        color: '#f6d743',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
     const touchOnly = this.isTouchOnly();
     const startText = this.add
       .text(
         GAME_WIDTH / 2,
-        172,
+        184,
         touchOnly ? 'THIS GAME NEEDS A KEYBOARD.\nPLEASE PLAY ON A COMPUTER.' : 'CLICK TO START OR PRESS E',
         {
           fontFamily: 'monospace',

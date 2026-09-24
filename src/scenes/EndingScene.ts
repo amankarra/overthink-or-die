@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH, TUNING } from '../config';
 import { AudioManager } from '../systems/AudioManager';
 import { DebugOverlay } from '../systems/DebugOverlay';
-import { setupSceneHotkeys } from '../util/sceneRouting';
+import { fadeToScene, ROUTE_TO_SCENE_KEY, setupSceneHotkeys } from '../util/sceneRouting';
 
 export class EndingScene extends Phaser.Scene {
   private debugOverlay?: DebugOverlay;
@@ -15,11 +15,21 @@ export class EndingScene extends Phaser.Scene {
     setupSceneHotkeys(this);
     const audio = new AudioManager(this);
     audio.stop('music_level');
-    audio.loop('music_dance', { volume: 0.36 });
+    audio.stop('diogenes_music');
+    audio.stop('nagarjuna_music');
+    audio.stop('cultists_music');
+    audio.stop('robo_incoming');
+    audio.stop('robo_why');
+    audio.stop('robo_bye');
+    audio.stop('music_dance');
+    audio.stop('ending_nowhere_man');
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      audio.stop('ending_nowhere_man');
+    });
     this.cameras.main.setBackgroundColor('#1f1f38');
     this.createAnimations();
     this.drawStage();
-    this.runWalkIn();
+    this.runWalkIn(audio);
     this.debugOverlay = new DebugOverlay(this);
   }
 
@@ -77,26 +87,9 @@ export class EndingScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(5);
-
-    const replay = this.add
-      .text(GAME_WIDTH / 2, 218, 'R - PLAY AGAIN', {
-        fontFamily: 'monospace',
-        fontSize: '12px',
-        color: '#f6d743',
-        align: 'center',
-      })
-      .setOrigin(0.5)
-      .setDepth(5);
-    this.tweens.add({
-      targets: replay,
-      alpha: 0.25,
-      duration: 620,
-      yoyo: true,
-      repeat: -1,
-    });
   }
 
-  private runWalkIn(): void {
+  private runWalkIn(audio: AudioManager): void {
     const hero = this.add
       .sprite(TUNING.endingScene.heroX, TUNING.endingScene.actorY, 'hero_idle_0')
       .setOrigin(0.5, 1)
@@ -139,6 +132,12 @@ export class EndingScene extends Phaser.Scene {
       hero.play('hero-dance');
       barrelMan.play('barrelman-run');
       meditator.play('meditator-dance');
+      void audio.play('ending_nowhere_man', {
+        volume: 0.42,
+        onEnded: () => {
+          fadeToScene(this, ROUTE_TO_SCENE_KEY.title);
+        },
+      });
       this.tweens.add({
         targets: hero,
         y: TUNING.endingScene.actorY - 7,

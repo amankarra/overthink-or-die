@@ -134,6 +134,8 @@ export class BossArenaScene extends Phaser.Scene {
   private fightStarted = false;
   private controlsLocked = true;
   private winStarted = false;
+  private roboByeFinished = false;
+  private robotExplosionFinished = false;
   private invulnerable = false;
   private devInvulnerable = false;
   private cableVisible = false;
@@ -154,6 +156,12 @@ export class BossArenaScene extends Phaser.Scene {
     setupSceneHotkeys(this);
     this.audio = new AudioManager(this);
     this.audio.loop('music_level', { volume: 0.22 });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.audio?.stop('cultists_music');
+      this.audio?.stop('robo_incoming');
+      this.audio?.stop('robo_why');
+      this.audio?.stop('robo_bye');
+    });
     this.cameras.main.setBackgroundColor('#79a9b3');
     this.cameras.main.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
     this.createAnimations();
@@ -246,6 +254,8 @@ export class BossArenaScene extends Phaser.Scene {
     this.fightStarted = false;
     this.controlsLocked = true;
     this.winStarted = false;
+    this.roboByeFinished = false;
+    this.robotExplosionFinished = false;
     this.invulnerable = false;
     this.devInvulnerable = false;
     this.cableVisible = false;
@@ -487,6 +497,7 @@ export class BossArenaScene extends Phaser.Scene {
     this.time.delayedCall(10550, () => this.closeFootDoor());
     this.time.delayedCall(10850, () => this.showCable(true));
     this.time.delayedCall(11200, () => {
+      this.audio?.loop('robo_incoming', { volume: 0.15 });
       this.walkRobotPath(
         [
           { gx: 8.5, gy: 5.3 },
@@ -499,6 +510,8 @@ export class BossArenaScene extends Phaser.Scene {
 
   private skipToFight(): void {
     this.registry.set('bossCinematicSeen', true);
+    this.audio?.stop('cultists_music');
+    this.audio?.stop('robo_incoming');
     this.groundState = 'cracked';
     this.drawGround();
     this.heroGround.gx = TUNING.bossArenaScene.heroStartGx;
@@ -512,6 +525,7 @@ export class BossArenaScene extends Phaser.Scene {
 
   private beginFight(): void {
     this.registry.set('bossCinematicSeen', true);
+    this.audio?.stop('robo_incoming');
     this.controlsLocked = false;
     this.fightStarted = true;
     this.robotState = 'CHASE';
@@ -682,12 +696,16 @@ export class BossArenaScene extends Phaser.Scene {
     this.altarHits = this.altars.filter((candidate) => candidate.destroyed).length;
     altar.sprite.setTexture('slab_fallen_0').setAlpha(0.82);
     this.syncAltar(altar);
+    const remainingAltars = this.remainingAltarCount;
     this.audio?.play('bonk', { volume: 0.75 });
+    if (remainingAltars > 0) {
+      this.audio?.play('robo_why', { volume: 0.8 });
+    }
     this.cameras.main.shake(170, 0.009);
     const screen = this.plane.groundToScreen(altar.ground.gx, altar.ground.gy);
     this.sparkAt(screen.x, screen.y - 22, 0xf6d743, 8);
 
-    if (this.remainingAltarCount > 0) {
+    if (remainingAltars > 0) {
       this.stumbleRobot();
     } else {
       this.startWinSequence();
@@ -1071,6 +1089,7 @@ export class BossArenaScene extends Phaser.Scene {
 
   private malfunctionRobot(): void {
     this.cameras.main.shake(600, 0.012);
+    this.startRoboByeSound();
     this.tweens.add({
       targets: this.robot,
       x: '+=4',
@@ -1092,6 +1111,23 @@ export class BossArenaScene extends Phaser.Scene {
     this.time.delayedCall(900, () => this.explodeRobot());
   }
 
+  private startRoboByeSound(): void {
+    void this.audio
+      ?.play('robo_bye', {
+        volume: 0.9,
+        onEnded: () => {
+          this.roboByeFinished = true;
+          this.finishWinSequenceWhenReady();
+        },
+      })
+      .then((started) => {
+        if (!started) {
+          this.roboByeFinished = true;
+          this.finishWinSequenceWhenReady();
+        }
+      });
+  }
+
   private explodeRobot(): void {
     if (!this.robot) {
       return;
@@ -1108,9 +1144,19 @@ export class BossArenaScene extends Phaser.Scene {
       alpha: 0,
       duration: 520,
       ease: 'Quad.easeOut',
-      onComplete: () => boom.destroy(),
+      onComplete: () => {
+        boom.destroy();
+        this.robotExplosionFinished = true;
+        this.finishWinSequenceWhenReady();
+      },
     });
-    this.time.delayedCall(650, () => fadeToScene(this, ROUTE_TO_SCENE_KEY.ending));
+  }
+
+  private finishWinSequenceWhenReady(): void {
+    if (!this.winStarted || !this.roboByeFinished || !this.robotExplosionFinished) {
+      return;
+    }
+    fadeToScene(this, ROUTE_TO_SCENE_KEY.ending);
   }
 
   private openFootDoor(): void {
@@ -1164,6 +1210,7 @@ export class BossArenaScene extends Phaser.Scene {
   }
 
   private summonCultists(): void {
+    this.audio?.loop('cultists_music', { volume: 0.15 });
     this.cultists.forEach((cultist) => {
       cultist.sprite.setVisible(true).setScale(1).setAlpha(1).play('worshipper-summon', true);
       cultist.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
@@ -1221,7 +1268,12 @@ export class BossArenaScene extends Phaser.Scene {
           alpha: 0,
           duration: 210,
           ease: 'Quad.easeIn',
-          onComplete: () => cultist.sprite.setVisible(false),
+          onComplete: () => {
+            cultist.sprite.setVisible(false);
+            if (index === this.cultists.length - 1) {
+              this.audio?.stop('cultists_music');
+            }
+          },
         });
       },
     });

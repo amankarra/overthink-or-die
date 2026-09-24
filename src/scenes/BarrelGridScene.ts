@@ -126,10 +126,11 @@ export class BarrelGridScene extends Phaser.Scene {
     this.resetRunState();
     setupSceneHotkeys(this);
     this.audio = new AudioManager(this);
-    this.audio.loop('music_level', { volume: 0.22 });
+    this.audio.loop('diogenes_music', { volume: 0.34 });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.audio?.stop('hiss');
       this.audio?.stop('roll');
+      this.audio?.stop('diogenes_music');
     });
 
     this.validateGrid();
@@ -749,7 +750,7 @@ export class BarrelGridScene extends Phaser.Scene {
     this.controlsEnabled = false;
     this.dialogue?.start(
       [
-        { speaker: 'HERO', text: 'Where am I?' },
+        { speaker: 'NOWHERE MAN', text: 'Where am I?' },
         { speaker: 'DIOGENES', text: 'In my way. Now let us wash some lettuce.' },
       ],
       () => {

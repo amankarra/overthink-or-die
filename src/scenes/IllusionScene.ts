@@ -47,7 +47,10 @@ export class IllusionScene extends Phaser.Scene {
     this.resetRunState();
     setupSceneHotkeys(this);
     this.audio = new AudioManager(this);
-    this.audio.loop('music_level', { volume: 0.22 });
+    this.audio.loop('nagarjuna_music', { volume: 0.15 });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.audio?.stop('nagarjuna_music');
+    });
     this.cameras.main.setBackgroundColor('#18202f');
     this.physics.world.setBounds(0, 0, TUNING.illusionScene.worldWidth, GAME_HEIGHT);
     this.cameras.main.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -434,7 +437,7 @@ export class IllusionScene extends Phaser.Scene {
   private startMeditatorDialogue(dialogue: DialogueSystem): void {
     dialogue.start(
       [
-        { speaker: 'HERO', text: 'How do I get out of here?' },
+        { speaker: 'NOWHERE MAN', text: 'How do I get out of here?' },
         { speaker: 'NAGARJUNA', text: this.getHintText() },
       ],
       () => this.revealDoors(),

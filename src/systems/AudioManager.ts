@@ -3,6 +3,7 @@ import { GAME_WIDTH } from '../config';
 
 type AudioOptions = {
   volume?: number;
+  onEnded?: () => void;
 };
 
 type LoopSource = {
@@ -25,6 +26,7 @@ export class AudioManager {
   private static buffers = new Map<string, AudioBuffer | null>();
   private static bufferPromises = new Map<string, Promise<AudioBuffer | undefined>>();
   private static loops = new Map<string, LoopSource>();
+  private static oneShots = new Map<string, Set<LoopSource>>();
   private static startingLoops = new Set<string>();
   private static pendingLoops = new Map<string, AudioOptions>();
 
@@ -73,11 +75,11 @@ export class AudioManager {
     }
   }
 
-  play(key: string, options: AudioOptions = {}): void {
+  play(key: string, options: AudioOptions = {}): Promise<boolean> {
     if (!AudioManager.unlocked) {
-      return;
+      return Promise.resolve(false);
     }
-    void AudioManager.start(key, { ...options, loop: false });
+    return AudioManager.start(key, { ...options, loop: false });
   }
 
   loop(key: string, options: AudioOptions = {}): void {
@@ -99,6 +101,7 @@ export class AudioManager {
     AudioManager.pendingLoops.delete(key);
     AudioManager.startingLoops.delete(key);
     AudioManager.stopLoop(key);
+    AudioManager.stopOneShots(key);
   }
 
   isLooping(key: string): boolean {
@@ -161,17 +164,17 @@ export class AudioManager {
   private static async start(
     key: string,
     options: AudioOptions & { loop: boolean },
-  ): Promise<void> {
+  ): Promise<boolean> {
     const context = AudioManager.ensureContext();
     if (!context) {
-      return;
+      return false;
     }
     const buffer = await AudioManager.getBuffer(key);
     if (!buffer) {
-      return;
+      return false;
     }
     if (options.loop && !AudioManager.startingLoops.has(key)) {
-      return;
+      return false;
     }
 
     if (options.loop) {
@@ -186,21 +189,54 @@ export class AudioManager {
     source.connect(gain);
     gain.connect(AudioManager.masterGain ?? context.destination);
 
-    if (options.loop) {
-      AudioManager.loops.set(key, { source, gain });
-      source.onended = () => {
+    const active = { source, gain };
+    let cleanedUp = false;
+    const cleanup = (runCallback: boolean): void => {
+      if (cleanedUp) {
+        return;
+      }
+      cleanedUp = true;
+      if (options.loop) {
         if (AudioManager.loops.get(key)?.source === source) {
           AudioManager.loops.delete(key);
         }
+      } else {
+        const sounds = AudioManager.oneShots.get(key);
+        sounds?.delete(active);
+        if (sounds?.size === 0) {
+          AudioManager.oneShots.delete(key);
+        }
+      }
+      try {
+        gain.disconnect();
+      } catch {
+        // A gain node can already be disconnected by a manual stop.
+      }
+      if (runCallback) {
+        options.onEnded?.();
+      }
+    };
+
+    if (options.loop) {
+      AudioManager.loops.set(key, active);
+      source.onended = () => {
+        cleanup(false);
+      };
+    } else {
+      const sounds = AudioManager.oneShots.get(key) ?? new Set<LoopSource>();
+      sounds.add(active);
+      AudioManager.oneShots.set(key, sounds);
+      source.onended = () => {
+        cleanup(true);
       };
     }
 
     try {
       source.start();
+      return true;
     } catch {
-      if (options.loop) {
-        AudioManager.loops.delete(key);
-      }
+      cleanup(false);
+      return false;
     }
   }
 
@@ -218,11 +254,33 @@ export class AudioManager {
     }
     AudioManager.loops.delete(key);
     try {
+      loop.source.onended = null;
       loop.source.stop();
     } catch {
       // Stopping a source that already ended should remain a silent no-op.
     }
     loop.gain.disconnect();
+  }
+
+  private static stopOneShots(key: string): void {
+    const sounds = AudioManager.oneShots.get(key);
+    if (!sounds) {
+      return;
+    }
+    AudioManager.oneShots.delete(key);
+    sounds.forEach(({ source, gain }) => {
+      try {
+        source.onended = null;
+        source.stop();
+      } catch {
+        // Stopping a source that already ended should remain a silent no-op.
+      }
+      try {
+        gain.disconnect();
+      } catch {
+        // A gain node can already be disconnected by its ended callback.
+      }
+    });
   }
 
   private static async getBuffer(key: string): Promise<AudioBuffer | undefined> {
