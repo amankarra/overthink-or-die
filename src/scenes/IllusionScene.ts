@@ -47,7 +47,7 @@ export class IllusionScene extends Phaser.Scene {
     this.resetRunState();
     setupSceneHotkeys(this);
     this.audio = new AudioManager(this);
-    this.audio.loop('nagarjuna_music', { volume: 0.15 });
+    this.audio.loop('nagarjuna_music', { volume: 0.8 });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.audio?.stop('nagarjuna_music');
     });
