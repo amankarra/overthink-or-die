@@ -2,7 +2,7 @@
 
 **ADVENTURES OF A REAL NOWHERE MAN**
 
-A short surreal retro browser game about shadows, doors, robots, philosophers, and the danger of asking too many questions.
+A short surreal retro browser game with puzzles, philosophers, and one evil robot.
 
 Built with Phaser 3, TypeScript, Vite, original pixel-art sprites, and OGG audio.
 
